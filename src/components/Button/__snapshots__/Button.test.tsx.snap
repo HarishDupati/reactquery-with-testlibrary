@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button tests > button - snapshot test 1`] = `
+<DocumentFragment>
+  <button
+    style="padding: 1rem 3rem; color: rgb(0, 0, 0); border: rgb(204, 204, 204); background-color: rgb(240, 240, 240); line-height: 1;"
+    type="button"
+  >
+    test button
+  </button>
+</DocumentFragment>
+`;
