@@ -28,26 +28,24 @@ export default function ProductsList({ data }: ProductsListProps) {
     navigate(`/products/${id}`);
   };
 
-  return data?.pages?.map((group, pageIndex) => (
-    <div key={`page-${pageIndex}`}>
-      {group.products.map((product) => (
-        <Product
-          key={product.id}
-          id={product.id}
-          title={product.title}
-          description={product.description}
-          price={product.price}
-          discountPercentage={product.discountPercentage}
-          rating={product.rating}
-          stock={product.stock}
-          brand={product.brand}
-          category={product.category}
-          thumbnail={product.thumbnail}
-          images={product.images}
-          onClick={handleClick}
-          data-testid={`product-${product.id}`}
-        />
-      ))}
-    </div>
-  ));
+  return data?.pages?.flatMap((group, pageIndex) => 
+    group.products.map((product) => (
+      <Product
+        key={`${pageIndex}-${product.id}`}
+        id={product.id}
+        title={product.title}
+        description={product.description}
+        price={product.price}
+        discountPercentage={product.discountPercentage}
+        rating={product.rating}
+        stock={product.stock}
+        brand={product.brand}
+        category={product.category}
+        thumbnail={product.thumbnail}
+        images={product.images}
+        onClick={handleClick}
+        data-testid={`product-${product.id}`}
+      />
+    ))
+  );
 }
