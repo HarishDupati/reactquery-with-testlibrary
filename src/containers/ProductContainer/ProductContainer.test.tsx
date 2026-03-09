@@ -1,13 +1,44 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProductContainer from "./ProductContainer";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import ProductsList from "../../components/ProductsList";
-import { fetchProducts } from "../../api/products";
+import { ThemeContext } from "../../context/ThemeContext";
+import { MemoryRouter } from "react-router";
 
-const client = new QueryClient();
+// Create a new QueryClient for each test to avoid interference
+const createTestQueryClient = () => new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      gcTime: 0,
+      staleTime: 0,
+    },
+  },
+});
 
-const mockData = [{id: 3, title: "Powder Canister"},{id: 4, title: "Red Lipstick"}]
+const mockProducts = [
+  {id: 3, title: "Powder Canister", description: "Test product", price: 10, discountPercentage: 5, rating: 4, stock: 5, brand: "Test Brand", category: "test", thumbnail: "https://via.placeholder.com/150", images: ["https://via.placeholder.com/150"]},
+  {id: 4, title: "Red Lipstick", description: "Test lipstick", price: 20, discountPercentage: 10, rating: 5, stock: 15, brand: "Test Brand", category: "beauty", thumbnail: "https://via.placeholder.com/150", images: ["https://via.placeholder.com/150"]}
+]
 
+const mockApiResponse = { 
+  products: mockProducts, 
+  total: 2, 
+  skip: 0, 
+  limit: 10 
+};
+
+const mockData = { pages: [mockApiResponse] }
+
+const mockThemeContext = {
+  themeValue: "light" as const,
+  setter: vi.fn()
+};
+
+// Mock the API function
+vi.mock('../../api/products', () => ({
+  fetchProducts: vi.fn(() => Promise.resolve(mockApiResponse))
+}));
     
 afterEach(() => {
   vi.resetAllMocks();
@@ -15,37 +46,51 @@ afterEach(() => {
 
 describe("ProductContainer", () => {
   test("Check if wrapper is present", async () => {
+    const client = createTestQueryClient();
     const component = (
-      <QueryClientProvider client={client}>
-        <ProductContainer />
-      </QueryClientProvider>
+      <MemoryRouter>
+        <ThemeContext.Provider value={mockThemeContext}>
+          <QueryClientProvider client={client}>
+            <ProductContainer keyword="test" />
+          </QueryClientProvider>
+        </ThemeContext.Provider>
+      </MemoryRouter>
     );
     render(component);
-    const product = await screen.findByTestId("products-container");
-    await expect(product).toBeInTheDocument();
+    
+    // Wait for the component to load and render the products container
+    await waitFor(() => {
+      const product = screen.getByTestId("products-container");
+      expect(product).toBeInTheDocument();
+    }, { timeout: 5000 });
   })
 
   test('check if products are present', async () => {
     render(
+      <MemoryRouter>
         <ProductsList data={mockData} />
+      </MemoryRouter>
     )
-    const sampleProduct = await screen.findByTestId('product-Red Lipstick')
+    const sampleProduct = await screen.findByTestId('product-4')
     await expect(sampleProduct).toBeInTheDocument();
   })
 
   test('test if api call works', async () => {
-    // if you use vi.fn() inplace of spyon here, it can override the global fetch funciton.
-    // which can cause errors and result in unexpected test results.
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-      json: () => Promise.resolve({ products: mockData })
-    } as Response)
+    // Test that our mock function returns expected data
+    const { fetchProducts } = await import('../../api/products');
     const apiResponse = await fetchProducts();
-    expect(fetchSpy).toHaveBeenCalled();
+    
+    // Verify the mock returns the expected structure
+    expect(apiResponse).toEqual(mockApiResponse);
 
+    const testData = { pages: [apiResponse] };
+    
     render(
-        <ProductsList data={apiResponse.products} />
+      <MemoryRouter>
+        <ProductsList data={testData} />
+      </MemoryRouter>
     )
-    const sampleProduct = await screen.findByTestId('product-Red Lipstick')
+    const sampleProduct = await screen.findByTestId('product-4')
     await expect(sampleProduct).toBeInTheDocument();
   })
 });

@@ -1,5 +1,15 @@
-function withContainer(IncomingComponent) {
-  return function (props) {
+import { type ReactElement } from 'react';
+
+interface WithContainerProps {
+  [key: string]: unknown;
+}
+
+interface ComponentType {
+  (props: WithContainerProps): ReactElement;
+}
+
+function withContainer(IncomingComponent: ComponentType) {
+  return function (props: WithContainerProps): ReactElement {
     return (
       <div className="parent-wrapper">
         <IncomingComponent {...props} />

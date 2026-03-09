@@ -11,6 +11,7 @@ interface ProductProps {
   thumbnail: string;
   images: string[];
   onClick: (id: number) => void;
+  'data-testid'?: string;
 }
 
 export default function Product({
@@ -24,8 +25,8 @@ export default function Product({
   brand,
   category,
   thumbnail,
-  images,
-  onClick
+  onClick,
+  'data-testid': testId
 }: ProductProps) {
   const discountedPrice = price - (price * discountPercentage / 100);
   const isLowStock = stock < 10;
@@ -33,6 +34,7 @@ export default function Product({
   return (
     <div 
       onClick={() => onClick(id)}
+      data-testid={testId}
       className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden group hover:-translate-y-1"
     >
       {/* Image Container */}

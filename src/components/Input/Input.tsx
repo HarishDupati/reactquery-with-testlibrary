@@ -1,8 +1,8 @@
-import { useState, type ChangeEvent } from "react";
+import { type ChangeEvent } from "react";
 
 interface InputProps {
   value: string,
-  changeHandler: (e: ChangeEvent) => void
+  changeHandler: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
 export const Input = ({value, changeHandler}: InputProps) => {

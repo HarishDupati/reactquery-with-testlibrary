@@ -1,19 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { Input } from "../Input/Input";
-import { fetchByKeyword } from "../../api/products";
 import { useState, type ChangeEvent } from "react";
+import type { ISearchField } from "./types";
 
-export default function SearchField({onSearchChange}) {
+
+
+export default function SearchField({onSearchChange}: ISearchField) {
   const [keyword, setKeyword] = useState<string>('')
-  // const {data, isLoading, isError, error} = useQuery({
-  //   queryKey: ['search', 'product', keyword],
-  //   queryFn: () => fetchByKeyword(keyword),
-  //   // enabled: !!keyword
-  // })
-  // console.log('isLoading: ', isLoading);
-  // console.log('data: ', data);
 
-  const changeHandler = (e: ChangeEvent) => {
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
     onSearchChange(e.target.value)
   }

@@ -2,13 +2,13 @@ export default function AccordionExample() {
 
 
   const handleBtnClick = (e: React.MouseEvent<HTMLElement>) => {
-    const expanded = e.target.getAttribute('aria-expanded') === 'true';
+    const expanded = (e.target as HTMLElement).getAttribute('aria-expanded') === 'true';
     console.log('expanded: ', expanded);
     const panel = document.querySelector('#panel1')
     console.log('panel: ', panel);
 
-    e.target.setAttribute('aria-expanded', !expanded)
-    panel?.setAttribute('aria-hidden', !expanded)
+    (e.target as HTMLElement).setAttribute('aria-expanded', (!expanded).toString())
+    panel?.setAttribute('aria-hidden', (!expanded).toString())
     
   }
 

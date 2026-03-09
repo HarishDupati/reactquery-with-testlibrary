@@ -1,14 +1,10 @@
 import { useState } from "react";
 import "./App.css";
-import ProductContainer from "./containers/ProductContainer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeContext, type themeValueType } from "./context/ThemeContext";
 import ErrorBoundary from "./hoc/ErrorBoundary";
-import AccordionExample from "./a11y/accordion";
-import ComponentWithHeader from "./hoc/HOCwithoutClass";
 import {
   createBrowserRouter,
-  Link,
   RouterProvider,
   Outlet,
 } from "react-router";

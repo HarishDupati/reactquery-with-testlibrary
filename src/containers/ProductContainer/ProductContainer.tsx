@@ -1,7 +1,6 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import ProductsList from "../../components/ProductsList";
-import { fetchProducts, postProduct } from "../../api/products";
-import Button from "../../components/Button";
+import { fetchProducts } from "../../api/products";
 import { useContext, useEffect, useCallback, useState } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
 
@@ -14,7 +13,7 @@ export default function ProductContainer({keyword}: {keyword: string}) {
   }
   const {themeValue, setter} = context;
   console.log('theme: ',themeValue, setter);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { 
     data, 
@@ -42,20 +41,14 @@ export default function ProductContainer({keyword}: {keyword: string}) {
   });
   console.log('data: =>', data);
 
-  const mutation = useMutation({
-    mutationFn: postProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const mutation = useMutation({
+  //   mutationFn: postProduct,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["products"] });
+  //   },
+  // });
 
-
-  // for creating a new product using post call
-  const handleClick = () => {
-    mutation.mutate({
-      title: "new product",
-    });
-  };
 
   // Scroll to bottom detection
   const handleScroll = useCallback(() => {
