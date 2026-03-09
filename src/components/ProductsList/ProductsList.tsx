@@ -1,10 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { fetchProductById } from "../../api/products";
+import Product from "../Product/Product";
 
 interface Product {
   id: number;
   title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
 }
 
 interface ProductsListProps {
@@ -12,30 +23,33 @@ interface ProductsListProps {
 }
 
 export default function ProductsList({ data = [] }: ProductsListProps) {
-  const [productId, setProductId] = useState(1) 
-  console.log('productId: ', productId);
+  const navigate = useNavigate();
 
-   // fetch product details by product id 
-  useQuery({
-    queryKey: ["products", productId],
-    queryFn: () => fetchProductById(productId),
-    staleTime: 100,
-    // refetchInterval: 1000 * 60, // refetch for every 1 min
-    refetchOnWindowFocus: false
-  });
-
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const pidElement = e.currentTarget.dataset.pid;
-    setProductId(Number(pidElement));
+  const handleClick = (id: number) => {
+    navigate(`/products/${id}`);
   };
 
-  return (
+  return data?.pages?.map((group, i) => (
     <>
-      {data.map((i) => (
-        <div key={i.title} data-pid={i.id} onClick={handleClick} data-testid={`product-${i.title}`}>
-          {i.title}
-        </div>
-      ))}
-    </>
-  );
+    {group.products.map((product) => (
+    <Product 
+      key={product.id}
+      id={product.id}
+      title={product.title}
+      description={product.description}
+      price={product.price}
+      discountPercentage={product.discountPercentage}
+      rating={product.rating}
+      stock={product.stock}
+      brand={product.brand}
+      category={product.category}
+      thumbnail={product.thumbnail}
+      images={product.images}
+      onClick={handleClick}
+      data-testid={`product-${product.id}`}
+    />
+  )
+  )}
+  </>
+  ))
 }
